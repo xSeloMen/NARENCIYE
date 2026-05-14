@@ -45,6 +45,17 @@ NARENCİYE/
 └── index.html           # Oyun ana iskeleti
 ```
 
+## 🏆 Yarışma ve Proje Kökeni
+Bu oyun, **"Geleceği Sen Yaz: Dijital Oyun Geliştirme Yarışması"** için özel olarak hazırlandı. Proje, Mersin'in narenciye temasını ve yerel kültürünü dijital bir yarışma deneyimine taşırken, aynı zamanda görsel ve oynanış odaklı bir sunum hedefliyor.
+
+## 👨‍🎓 Proje Künye
+- **Geliştirici:** Selahattin Sarıbay (11. Sınıf)
+- **Öğrenci No:** 1308
+- **Okul:** Yahya Günsur Mesleki ve Teknik Anadolu Lisesi
+- **Danışman Öğretmen:** Zehra Abacı
+
+Selahattin, okulunun vizyonunu yansıtan güçlü bir proje ortaya koydu. Tasarım anlayışı, kullanıcı deneyimine verdiği önem ve narenciye temalı yarışmaya uygun ortam yaratma konusundaki başarısı ile dikkat çekiyor.
+
 ## 🛠️ Geliştirme
 - `js/config.js` dosyasından seviyeleri, hamle sayılarını ve hedef puanları değiştirebilirsiniz.
 - `css/style.css` dosyası oyun temasını kişiselleştirmenize izin verir.
