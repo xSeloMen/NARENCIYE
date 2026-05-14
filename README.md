@@ -46,7 +46,7 @@ NARENCİYE/
 ```
 
 ## 🏆 Yarışma ve Proje Kökeni
-Bu oyun, **"Geleceği Sen Yaz: Dijital Oyun Geliştirme Yarışması"** için özel olarak hazırlandı. Proje, Mersin'in narenciye temasını ve yerel kültürünü dijital bir yarışma deneyimine taşırken, aynı zamanda görsel ve oynanış odaklı bir sunum hedefliyor.
+Bu oyun, **"Geleceği Sen Yaz: Narenciye Temalı Dijital Oyun Yarışması"** için özel olarak hazırlandı. Proje, Mersin'in narenciye temasını ve yerel kültürünü dijital bir yarışma deneyimine taşırken, aynı zamanda görsel ve oynanış odaklı bir sunum hedefliyor.
 
 ## 👨‍🎓 Proje Künye
 - **Geliştirici:** Selahattin Sarıbay (11. Sınıf)
