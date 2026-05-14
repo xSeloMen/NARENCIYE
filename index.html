@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narenciye Kaptanı - Mersin'den Dünyaya</title>
+    <link rel="stylesheet" href="css/style.css">
+    <base target="_blank">
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+
+    <div id="gameContainer">
+        <!-- Enlarged canvas to fit the bigger cell size (1050x850) -->
+        <canvas id="gameCanvas" width="1050" height="850"></canvas>
+
+        <div class="overlay">
+            <!-- UI Panels (Tidied Up) -->
+            <div class="game-header">
+                <div id="scorePanel" class="ui-panel premium-panel header-panel">
+                    <div class="panel-icon">🌟</div>
+                    <div class="panel-content">
+                        <div class="panel-label">Toplam Puan</div>
+                        <div id="scoreValue" class="panel-value score-glow">0</div>
+                        <div style="display: flex; gap: 15px; margin-top: 5px; font-size: 14px;">
+                            <div>🍋 <span id="lemonCount" style="font-weight: bold; color: #FFF;">0</span></div>
+                            <div>🔥 <span id="maxComboDisplay" style="font-weight: bold; color: #FFF;">0</span>x</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="levelPanel" class="ui-panel premium-panel header-panel">
+                    <div class="panel-icon">🗺️</div>
+                    <div class="panel-content">
+                        <div class="panel-label">Seviye</div>
+                        <div id="levelValue" class="panel-value level-glow">1</div>
+                        <div id="levelName" class="level-name-text">Mersin Fidanlığı</div>
+                    </div>
+                </div>
+
+                <div id="movesPanel" class="ui-panel premium-panel header-panel moves-panel">
+                    <div class="panel-content">
+                        <div class="panel-label">Kalan Hamle</div>
+                        <div id="movesValue" class="panel-value moves-glow">25</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boss UI -->
+            <div id="bossUI">
+                <div id="bossName">UÇKURUTAN BÖCEĞİ</div>
+                <div id="bossHealthBar">
+                    <div id="bossHealthFill"></div>
+                </div>
+            </div>
+            
+            <!-- Powerup UI -->
+            <div id="powerupContainer" class="ui-panel" style="right: 30px; bottom: 30px; width: 60px; height: 180px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; z-index: 10;">
+                <div style="flex-grow: 1; width: 30px; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.2); position: relative;">
+                    <div id="powerupFill" style="position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(0deg, #32CD32, #ADFF2F); transition: height 0.3s ease;"></div>
+                </div>
+                <button id="powerupBtn" onclick="togglePowerup()" style="width: 50px; height: 50px; border-radius: 25px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 24px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0,0,0,0.5);" title="Zirai İlaç - Tıkla ve bir taşı yok et!">🧪</button>
+            </div>
+
+            <!-- Dynamic Combo Display -->
+            <div id="comboDisplay"></div>
+
+            <!-- Achievements -->
+            <div id="achievementPopup">Başarım Kazanıldı!</div>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer">
+                <div id="progressText">Hedef: 1,000 puan</div>
+                <div id="progressBar">
+                    <div id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen">
+            <div class="screen-title">NARENCİYE KAPTANI</div>
+            <div class="screen-subtitle">Mersin'den Dünyaya Açıl!</div>
+            <div class="info-box">
+                <strong style="color: #FFA500; font-size: 20px;">Mersin - Türkiye'nin Narenciye
+                    Başkenti!</strong><br><br>
+                Türkiye limon üretiminin <strong style="color: #FFD700;">%48'i</strong> Mersin'den karşılanıyor.<br>
+                <strong>Lamas, Enterdonat, Kütdiken</strong> çeşitleriyle dünyaya ihraç ediyoruz.<br><br>
+                <strong style="color: #90EE90;">Görevin:</strong> Narenciye bahçeni büyüt, zararlıları yen ve ürünlerini
+                dünya pazarlarına ulaştır!
+            </div>
+
+            <div class="fruit-legend">
+                <div class="legend-item"><img src="assets/images/lemon.png" class="legend-img" onerror="this.src=''"
+                        alt="🍋"> Lamas Limonu</div>
+                <div class="legend-item"><img src="assets/images/orange.png" class="legend-img" onerror="this.src=''"
+                        alt="🍊"> Portakal</div>
+                <div class="legend-item"><img src="assets/images/mandarin.png" class="legend-img" onerror="this.src=''"
+                        alt="🍊"> Mandalina</div>
+                <div class="legend-item"><img src="assets/images/grapefruit.png" class="legend-img"
+                        onerror="this.src=''" alt="🟡"> Greyfurt</div>
+                <div class="legend-item"><img src="assets/images/lime.png" class="legend-img" onerror="this.src=''"
+                        alt="🍈"> Mayer</div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="showMap()">
+                    <svg style="width:24px;height:24px;vertical-align:middle;margin-right:10px" viewBox="0 0 24 24"><path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" /></svg>
+                    OYUNA BAŞLA
+                </button>
+                <button class="btn btn-secondary" onclick="showHowToPlay()">
+                    <svg style="width:24px;height:24px;vertical-align:middle;margin-right:10px" viewBox="0 0 24 24"><path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" /></svg>
+                    NASIL OYNANIR?
+                </button>
+                <button class="btn" style="background: linear-gradient(135deg, #8A2BE2, #4B0082);" onclick="showCredits()">
+                    <svg style="width:24px;height:24px;vertical-align:middle;margin-right:10px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>
+                    KÜNYE
+                </button>
+            </div>
+        </div>
+        
+        <!-- Level Map Screen -->
+        <div id="mapScreen" class="screen hidden">
+            <div class="screen-title" style="font-size: 50px;">Mersin Haritası</div>
+            <div class="screen-subtitle">Bölgeleri Kurtar!</div>
+            <div class="level-map" id="levelMapGrid">
+                <!-- Dynamically populated in js/ui.js -->
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="backToMenu()">ANA MENÜ</button>
+                <button class="btn" style="background: linear-gradient(135deg, #607D8B, #455A64);" onclick="showSettings()">⚙️ AYARLAR</button>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="screen hidden">
+            <div class="screen-title" style="font-size: 50px;">Ayarlar</div>
+            <div class="info-box" style="display: flex; flex-direction: column; gap: 18px; align-items: stretch; min-width: 400px; max-width: 560px;">
+                <div style="font-size: 24px; font-weight: 800; color: #FFD700; text-align: center;">Ayarlar</div>
+                <div class="setting-row">
+                    <label for="volumeSlider" class="setting-label">Ses Seviyesi</label>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="updateVolume(this.value)" class="setting-range">
+                    <div id="volumeText" class="setting-value">%50</div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Müzik</span>
+                    <button id="musicToggle" class="toggle-btn" onclick="toggleMusic()">Açık</button>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Ses Efektleri</span>
+                    <button id="effectsToggle" class="toggle-btn" onclick="toggleSoundEffects()">Açık</button>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Görsel Efektler</span>
+                    <button id="visualsToggle" class="toggle-btn" onclick="toggleVisualEffects()">Normal</button>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Hamle İpuçları</span>
+                    <button id="hintToggle" class="toggle-btn" onclick="toggleHints()">Açık</button>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="closeSettings()">KAPAT</button>
+        </div>
+
+        <!-- Credits Screen (Künye) -->
+        <div id="creditsScreen" class="screen hidden">
+            <div class="screen-title" style="font-size: 50px; background: linear-gradient(135deg, #8A2BE2, #DDA0DD); -webkit-background-clip: text; filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.4));">PROJE KÜNYESİ</div>
+            <div class="info-box" style="max-width: 600px;">
+                <strong style="color: #FFA500; font-size: 22px;">Geleceği Sen Yaz: Dijital Oyun Geliştirme Yarışması</strong><br><br>
+                <div style="text-align: center; margin-top: 15px; font-size: 18px; line-height: 2;">
+                    <span style="color: #87CEEB;">Geliştirici:</span> <strong style="color: #FFD700;">Selahattin Sarıbay (11. Sınıf)</strong><br>
+                    <span style="color: #87CEEB;">Öğrenci No:</span> <strong style="color: #FFD700;">1308</strong><br>
+                    <span style="color: #87CEEB;">Danışman Öğretmen:</span> <strong style="color: #FFD700;">Zehra Abacı</strong><br>
+                    <span style="color: #87CEEB;">Okul:</span> <strong style="color: #FFD700;">Yahya Günsur Mesleki ve Teknik Anadolu Lisesi</strong><br>
+                </div>
+                <br>
+                <span style="color: #90EE90; font-size: 14px;">"Narenciye Şehri Mersin" temalı oyun projemizdir.</span>
+            </div>
+            <button class="btn" onclick="backToMenu()">ANA MENÜ</button>
+        </div>
+
+        <!-- Epic Story Screen -->
+        <div id="storyScreen" class="screen hidden">
+            <div class="story-background"></div>
+            <div class="story-content-box">
+                <img src="assets/images/lemon.png" alt="Glowing Lemon" class="story-glowing-fruit">
+                <h2 class="story-title">Mersin'in Kaderi<br>Senin Ellerinde!</h2>
+                <div class="story-text">
+                    <p>Türkiye'nin narenciye başkenti büyük bir tehdit altında...</p>
+                    <p class="highlight-text">İklim krizleri, amansız don olayları ve devasa <span class="danger-text">Uçkurutan Böcekleri</span> hasadımızı yok etmek üzere!</p>
+                    <p>Meyveleri 3'lü eşleştirerek topla, özel güçlerini serbest bırak ve patronları alt et. Tüm umudumuz sensin, Kaptan!</p>
+                </div>
+                <button class="btn pulse-btn" style="margin-top: 40px; padding: 20px 50px; font-size: 24px;" onclick="startLevelFromStory()">GÖREVE BAŞLA</button>
+            </div>
+        </div>
+
+        <!-- Ultimate Mersin Loading Screen -->
+        <div id="loadingScreen" class="screen" style="z-index: 1000; overflow: hidden; width: 100%; height: 100%; background: linear-gradient(180deg, #1b263b 0%, #0d1b2a 100%); transition: opacity 1.5s ease-in-out, visibility 1.5s;">
+            
+            <!-- Faded Giant Lemon Texture -->
+            <img src="assets/images/lemon.png" class="faded-lemon-bg" alt="Faded Lemon">
+
+            <!-- Sun / Glow -->
+            <div class="sunset-glow"></div>
+
+            <!-- Content -->
+            <div class="cinematic-content">
+                <div class="cinematic-title-wrapper">
+                    <h1 class="cinematic-title">MERSİN</h1>
+                    <div class="cinematic-sub">NARENCİYE KAPTANI</div>
+                </div>
+                
+                <div class="cinematic-progress-container">
+                    <div id="cinematicLoadingBar" class="cinematic-progress-line"></div>
+                </div>
+                <div class="loading-status">Mersin'in narenciye dünyası hazırlanıyor...</div>
+            </div>
+
+            <!-- Kiz Kalesi & Sea Waves Silhouette -->
+            <div class="kiz-kalesi-silhouette">
+                <div class="castle"></div>
+            </div>
+            <!-- Flying Birds -->
+            <div class="birds-container">
+                <div class="bird bird1"></div>
+                <div class="bird bird2"></div>
+                <div class="bird bird3"></div>
+            </div>
+            
+            <div class="sea-waves">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+                <div class="wave wave3"></div>
+            </div>
+        </div>
+
+        <!-- Tutorial Screen -->
+        <div id="tutorialScreen" class="screen hidden">
+            <div class="screen-title" style="font-size: 50px;">Hoş Geldiniz Kaptan!</div>
+            <div class="info-box" style="max-width: 700px;">
+                <strong style="color: #FFA500; font-size: 22px;">Narenciye Kaptanı'na Hoş Geldiniz!</strong><br><br>
+                Bu oyunda Mersin'in narenciye bahçelerini yöneterek dünya pazarlarına ulaşacaksınız.<br><br>
+                <div style="text-align: left; margin-left: 20px;">
+                    <strong style="color: #FFD700;">Nasıl Oynanır:</strong><br><br>
+                    • Fare ile narenciyeleri sürükleyip eşleştirin<br>
+                    • <strong style="color:#90EE90">3 veya daha fazla</strong> aynı narenciye eşleştirin<br>
+                    • Hedef puanı toplayarak seviyeleri tamamlayın<br>
+                </div>
+                <br>
+                <strong style="color: #90EE90; font-size: 20px;">Hazır mısınız?</strong>
+            </div>
+            <button class="btn" onclick="startActualGame()">BAHÇEYE GİT</button>
+        </div>
+
+        <!-- How To Play Screen -->
+        <div id="howToPlayScreen" class="screen hidden">
+            <div class="screen-title" style="font-size: 40px; margin-top: -20px;">Kılavuz</div>
+            <div class="info-box"
+                style="max-width: 750px; text-align: left; font-size: 15px; overflow-y: auto; max-height: 60vh;">
+                <strong style="color: #FFA500; font-size: 18px;">Özel Narenciyeler:</strong><br><br>
+                - <strong style="color: #FF6B35;">4'lü eşleşme:</strong> Patlayıcı Narenciye (3x3 alanı patlatır 💣)<br>
+                - <strong style="color: #FF4444;">5'li eşleşme:</strong> Füze/Roket (Satır veya sütun siler 🚀)<br>
+                - <strong style="color: #4444FF;">6'lı veya L şeklinde eşleşme:</strong> Gökkuşağı (Tüm tahtadaki aynı
+                türü yok eder 🌈)<br><br>
+
+                <strong style="color: #FF6B35; font-size: 18px;">Boss Savaşları:</strong><br><br>
+                - <strong style="color: #8B4513;">Uçkurutan Böceği:</strong> Ağaçları kurutur, kombolarla yen!<br>
+                - <strong style="color: #87CEEB;">Don Zararlısı:</strong> Tahtaları dondurur, yanlarında eşleştirme
+                yaparak buzu kır!<br>
+                - <strong style="color: #D2691E;">Kuraklık:</strong> Hamle sınırı çok azdır, her hamleyi düşün!<br><br>
+
+                <strong style="color: #90EE90; font-size: 18px;">Seviye Haritası (17 Bölüm):</strong><br><br>
+                Mersin Fidanlığı ➡️ Erdemli ➡️ Silifke ➡️ Anamur ➡️ Tarsus ➡️ Lamas ➡️ Enterdonat ➡️ İhracat ➡️ Rusya ➡️
+                Avrupa ➡️ Dünya Lideri!
+            </div>
+            <button class="btn" onclick="hideHowToPlay()">GERİ DÖN</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen hidden">
+            <div class="screen-title" style="color: #ff4444;">OYUN BİTTİ</div>
+            <div class="screen-subtitle" id="gameOverReason">Bahçen zarar gördü!</div>
+            <div class="info-box" style="min-width: 450px;">
+                <div
+                    style="font-size: 64px; color: #FFD700; margin: 15px 0; text-shadow: 0 0 30px rgba(255,215,0,0.5); font-family: 'Fredoka One', cursive;">
+                    <span id="finalScore">0</span>
+                </div>
+                <div style="font-size: 24px; color: #FFA500; font-weight: 800; margin-bottom: 20px;">Ulaşılan Seviye:
+                    <span id="finalLevel">1</span>
+                </div>
+                <div style="margin-top: 20px; font-size: 18px; line-height: 2;">
+                    <div class="stat-row"><span>Toplanan Limon:</span><strong style="color: #FFD700;"><span
+                                id="finalLemons">0</span></strong></div>
+                    <div class="stat-row"><span>Max Kombo:</span><strong style="color: #FF6B35;"><span
+                                id="finalCombo">0</span>x</strong></div>
+                </div>
+            </div>
+            <div>
+                <button class="btn" onclick="restartGame()">YENİDEN DENE</button>
+                <button class="btn" onclick="backToMenu()"
+                    style="background: linear-gradient(135deg, #666, #888); box-shadow: 0 10px 30px rgba(0,0,0,0.4);">ANA
+                    MENÜ</button>
+            </div>
+        </div>
+
+        <!-- Level Complete Screen -->
+        <div id="levelCompleteScreen" class="screen hidden">
+            <div class="screen-title"
+                style="background: linear-gradient(135deg, #90EE90, #4CAF50); -webkit-background-clip: text; filter: drop-shadow(0 0 20px rgba(144, 238, 144, 0.4));">
+                BAŞARILI!</div>
+            <div class="screen-subtitle" id="levelCompleteText">Seviye tamamlandı!</div>
+            <div class="info-box" style="min-width: 450px;">
+                <div style="font-size: 52px; color: #FFD700; margin: 15px 0; font-family: 'Fredoka One', cursive;"><span
+                        id="levelScore">0</span> Puan</div>
+                <div id="levelStars"
+                    style="font-size: 48px; margin: 15px 0; letter-spacing: 5px; text-shadow: 0 0 20px rgba(255,215,0,0.8);">
+                    ⭐⭐⭐</div>
+                <div id="levelInfo"
+                    style="margin-top: 20px; font-size: 16px; color: #87CEEB; line-height: 1.6; font-weight: 700;">
+                </div>
+            </div>
+            <button class="btn" onclick="nextLevel()">SONRAKİ SEVİYE</button>
+        </div>
+        <!-- Pause Button (Visible during gameplay) -->
+        <button id="pauseBtn" class="hidden" onclick="togglePause()">⏸️</button>
+
+        <!-- Pause Screen -->
+        <div id="pauseScreen" class="screen hidden" style="background: rgba(10, 10, 20, 0.9);">
+            <div class="pause-panel">
+                <div class="screen-title" style="color: #FFD700;">OYUN DURAKLATILDI</div>
+                <div class="info-box" style="width: 100%; text-align: center;">
+                    Mersin narenciyeleri seni bekliyor!
+                </div>
+                <div class="pause-actions">
+                    <button class="btn" onclick="togglePause()">DEVAM ET</button>
+                    <button class="btn btn-secondary" onclick="showSettings()">AYARLAR</button>
+                    <button class="btn btn-secondary" onclick="restartGame()">YENİDEN BAŞLA</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #ff4444, #cc0000);" onclick="backToMenu()">ANA MENÜ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Game Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/graphics.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
